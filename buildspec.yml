@@ -1,10 +1,5 @@
 version: 0.2
 
-env:
-  secrets-manager:
-    DOCKERHUB_USERNAME: "docker-hub-credentials:username"
-    DOCKERHUB_PASSWORD: "docker-hub-credentials:password"
-
 phases:
   pre_build:
     commands:
@@ -13,10 +8,8 @@ phases:
 
   build:
     commands:
-      # 1. アプリケーションをビルドする
       - echo "Building the application with Maven..."
       - mvn package
-      # 2. Dockerイメージをビルドする
       - echo "Building the Docker image..."
       - docker build -t $ImageName -f ./Dockerfile .
 
