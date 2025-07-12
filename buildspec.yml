@@ -1,7 +1,6 @@
 version: 0.2
 
 env:
-  # Secrets ManagerからDocker Hubの認証情報を取得するための設定
   secrets-manager:
     DOCKERHUB_USERNAME: "docker-hub-credentials:username"
     DOCKERHUB_PASSWORD: "docker-hub-credentials:password"
@@ -16,7 +15,12 @@ phases:
 
   build:
     commands:
+      # --- ここにアプリケーションのビルドコマンドを追加 ---
+      - echo "Building the application with Maven..."
+      - mvn package
+
       # Dockerイメージのビルド
+      - echo "Building the Docker image..."
       - docker build -t $ImageName -f ./Dockerfile .
 
   post_build:
