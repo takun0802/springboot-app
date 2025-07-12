@@ -13,8 +13,10 @@ phases:
 
   build:
     commands:
+      # 1. アプリケーションをビルドする
       - echo "Building the application with Maven..."
       - mvn package
+      # 2. Dockerイメージをビルドする
       - echo "Building the Docker image..."
       - docker build -t $ImageName -f ./Dockerfile .
 
