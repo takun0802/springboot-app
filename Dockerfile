@@ -5,7 +5,7 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # ローカルの JAR ファイルをコンテナにコピー
-COPY target/awsMicroservice-0.0.1-SNAPSHOT.jar app.jar
+COPY target/*.jar app.jar
 
 # コンテナ起動時に実行するコマンド
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
