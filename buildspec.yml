@@ -8,26 +8,19 @@ env:
 phases:
   pre_build:
     commands:
-      # AWS ECRへのログイン
       - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com
-      # Docker Hubへのログイン
       - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
 
   build:
     commands:
-      # アプリケーションのビルド（Mavenを使用している場合）
       - echo "Building the application with Maven..."
       - mvn package
-
-      # Dockerイメージのビルド
       - echo "Building the Docker image..."
       - docker build -t $ImageName -f ./Dockerfile .
 
   post_build:
     commands:
-      # Dockerイメージにタグを付ける
       - docker tag $ImageName:latest 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com/$ImageName:latest
-      # イメージをECRにプッシュする
       - docker push 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com/$ImageName:latest
 
 artifacts:
