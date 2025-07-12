@@ -14,6 +14,8 @@ phases:
       - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
   build:
     commands:
+      - echo Changing directory to awsMicroservice...
+      - cd awsMicroservice
       - echo Build with Maven...
       - chmod +x mvnw  # ← mvnw の実行権限付与
       - ./mvnw clean package -DskipTests
