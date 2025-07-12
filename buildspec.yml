@@ -5,7 +5,7 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin <AWSアカウントID>.dkr.ecr.ap-northeast-1.amazonaws.com
-      - REPOSITORY_URI=<AWSアカウントID>.dkr.ecr.ap-northeast-1.amazonaws.com/my-springboot-app
+      - REPOSITORY_URI=5135-9437-6299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
   build:
     commands:
