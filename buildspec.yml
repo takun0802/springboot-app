@@ -15,7 +15,7 @@ phases:
 
   build:
     commands:
-      # --- ここにアプリケーションのビルドコマンドを追加 ---
+      # アプリケーションのビルド（Mavenを使用している場合）
       - echo "Building the application with Maven..."
       - mvn package
 
