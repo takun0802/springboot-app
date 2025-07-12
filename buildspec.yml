@@ -9,9 +9,9 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 5135-9437-6299.dkr.ecr.ap-northeast-1.amazonaws.com
-      - REPOSITORY_URI=5135-9437-6299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app
+      - export REPOSITORY_URI=5135-9437-6299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app
       - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
   build:
     commands:
       - echo Build with Maven...
