@@ -8,19 +8,20 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 5135-9437-6299.dkr.ecr.ap-northeast-1.amazonaws.com
-      - export REPOSITORY_URI=5135-9437-6299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app
+      - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com
+      - echo Logging in to Docker Hub...
       - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+      - export REPOSITORY_URI=513594376299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app
       - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
   build:
     commands:
       - echo Changing directory to awsMicroservice...
       - cd awsMicroservice
       - echo Build with Maven...
-      - chmod +x mvnw
+      - chmod +x mvnw  # mvnwに実行権限付与
       - ./mvnw clean package -DskipTests
       - echo Check target contents...
-      - ls -la target
+      - ls -la target  # JARが正しく生成されたか確認
       - echo Building Docker image...
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
   post_build:
