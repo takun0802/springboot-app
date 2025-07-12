@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto17  # Javaバージョンを合わせる（21はまだCodeBuild標準にないかも）
+      java: corretto17  # Javaバージョン（CodeBuild 標準）
       docker: 19
   pre_build:
     commands:
@@ -15,7 +15,10 @@ phases:
   build:
     commands:
       - echo Build with Maven...
+      - chmod +x mvnw  # ← これが重要（エラー予防）
       - ./mvnw clean package -DskipTests
+      - echo Check target contents...
+      - ls -la target  # ← JAR があるか確認
       - echo Building Docker image...
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
   post_build:
