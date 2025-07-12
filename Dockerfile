@@ -1,11 +1,13 @@
-# ベースイメージ（Java 21 の公式イメージ）
-FROM eclipse-temurin:21-jre
-
-# 作業ディレクトリを作成
+# ステージ1: アプリケーションをビルドする
+FROM maven:3.8.7-eclipse-temurin-17 AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# ローカルの JAR ファイルをコンテナにコピー
-COPY target/*.jar app.jar
-
-# コンテナ起動時に実行するコマンド
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# ステージ2: 軽量なランタイムイメージを作成する
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

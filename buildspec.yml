@@ -8,18 +8,15 @@ env:
 phases:
   pre_build:
     commands:
+      # AWS ECRへのログイン
       - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com
+      # Docker Hubへのログイン
       - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
 
   build:
     commands:
-      - echo "Building the application with Maven..."
-      - mvn package
-      # --- デバッグ用コマンドをここに追加 ---
-      - echo "Listing contents of target directory:"
-      - ls -l target/
-      # -----------------------------------
-      - echo "Building the Docker image..."
+      # アプリケーションのビルドとDockerイメージのビルドを同時に行う
+      - echo "Building the Docker image using multi-stage build..."
       - docker build -t $ImageName -f ./Dockerfile .
 
   post_build:
