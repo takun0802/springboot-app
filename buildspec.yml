@@ -15,10 +15,10 @@ phases:
   build:
     commands:
       - echo Build with Maven...
-      - chmod +x mvnw  # ← これが重要（エラー予防）
+      - chmod +x mvnw  # ← mvnw の実行権限付与
       - ./mvnw clean package -DskipTests
       - echo Check target contents...
-      - ls -la target  # ← JAR があるか確認
+      - ls -la target  # ← JAR が正しく生成されたか確認
       - echo Building Docker image...
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
   post_build:
