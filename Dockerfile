@@ -23,7 +23,7 @@ RUN mvn package -DskipTests
 # Stage 2: 実行ステージ - ビルドされたJARファイルを実行するための軽量なJREイメージ
 # -------------------------------------------------------------------------------
 # Java 21 JRE (Eclipse Temurin) の軽量イメージを使用
-FROM eclipse-temurin:21-jre-jammy # 環境に合わせて eclipse-temurin:21-jre-alpine なども選択可能
+FROM eclipse-temurin:21-jre-jammy
 
 # 作業ディレクトリを設定
 WORKDIR /app
