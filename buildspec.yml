@@ -8,25 +8,21 @@ env:
 phases:
   pre_build:
     commands:
-      # AWS ECRへのログイン
+      # AWS ECRへのログイン (ハイフンを削除)
       - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com
       # Docker Hubへのログイン
-      # Secrets Managerから取得したDOCKERHUB_PASSWORDとDOCKERHUB_USERNAMEを使用
       - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
 
   build:
     commands:
-      # アプリケーションのビルドとDockerイメージのビルドを同時に行う
-      # ローカルでのビルドイメージ名を 'my-app' に固定
       - echo "Building the Docker image using multi-stage build..."
       - docker build -t my-app -f ./Dockerfile .
 
   post_build:
     commands:
-      # ECRにタグ付けしてプッシュ
-      # ローカルの 'my-app:latest' イメージに、固定されたECRリポジトリ名をタグ付け
+      # ECRにタグ付けしてプッシュ (ハイフンを削除)
       - docker tag my-app:latest 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app:latest
-      # 固定されたECRリポジトリにプッシュ
+      # ECRにプッシュ (ハイフンを削除)
       - docker push 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app:latest
 
 artifacts:
