@@ -34,5 +34,5 @@ COPY --from=builder /app/target/*.jar app.jar
 # アプリケーションがリッスンするポートを公開 (Spring Bootのデフォルトは8080)
 EXPOSE 8080
 
-# アプリケーションを実行するコマンド0
+# アプリケーションを実行するコマンド
 CMD ["java", "-jar", "app.jar"]
