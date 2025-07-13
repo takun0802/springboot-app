@@ -16,16 +16,23 @@ phases:
   build:
     commands:
       - echo "Building the Docker image using multi-stage build..."
-      # ここでDockerfileを使用してDockerイメージをビルド
       - docker build -t my-app -f ./Dockerfile .
 
   post_build:
     commands:
-      # ビルドしたDockerイメージをECRにタグ付け
+      # ECRにタグ付けしてプッシュ
       - docker tag my-app:latest 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app:latest
-      # ECRにプッシュ
       - docker push 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app:latest
+
+      # --- ここから追加 ---
+      # imagedefinitions.json ファイルを作成
+      # ECRのリポジトリURIを構築
+      - IMAGE_URI=$(printf '%s.dkr.ecr.%s.amazonaws.com/%s:latest' 513594376299 ap-northeast-1 springboot-app)
+      - echo "[{\"name\":\"springboot-app\",\"imageUri\":\"$IMAGE_URI\"}]" > imagedefinitions.json
+      # --- ここまで追加 ---
 
 artifacts:
   files:
     - '**/*'
+    # --- ここにimagedefinitions.jsonを追加 ---
+    - imagedefinitions.json
