@@ -1,35 +1,38 @@
-version: 0.2
+# -------------------------------------------------------------------------------
+# Stage 1: ビルドステージ - アプリケーションのビルドとJARファイルの作成
+# -------------------------------------------------------------------------------
+# MavenとJava 17 (Eclipse Temurin) を含むベースイメージを使用
+FROM maven:3.8.7-eclipse-temurin-17 AS builder
 
-env:
-  secrets-manager:
-    DOCKERHUB_USERNAME: "docker-hub-credentials:username"
-    DOCKERHUB_PASSWORD: "docker-hub-credentials:password"
+# 作業ディレクトリを設定
+WORKDIR /app
 
-phases:
-  pre_build:
-    commands:
-      # AWS ECRへのログイン
-      - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com
-      # Docker Hubへのログイン
-      - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+# Mavenの依存関係をキャッシュするためにpom.xmlのみを先にコピー
+COPY pom.xml .
 
-  build:
-    commands:
-      # アプリケーションのビルドとDockerイメージのビルドを同時に行う
-      # ローカルでのビルドイメージ名を 'my-app' に固定します。
-      # これはCodeBuildの環境変数$ImageNameに依存しません。
-      - echo "Building the Docker image using multi-stage build..."
-      - docker build -t my-app -f ./Dockerfile . # ローカルイメージ名を $ImageName から 'my-app' に変更
+# 依存関係をダウンロード (pom.xmlが変更されない限りキャッシュされる)
+RUN mvn dependency:go-offline -B
 
-  post_build:
-    commands:
-      # ECRにタグ付けしてプッシュ
-      # ローカルでビルドした 'my-app:latest' イメージに、
-      # 'springboot-app' というECRリポジトリ名をタグ付けします。
-      - docker tag my-app:latest 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app:latest
-      # 'springboot-app' リポジトリにプッシュします。
-      - docker push 513594376299.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-app:latest
+# プロジェクトのソースコードをコピー
+COPY src ./src
 
-artifacts:
-  files:
-    - '**/*'
+# Mavenを使用してアプリケーションをパッケージング (JARファイルを生成)
+RUN mvn package -DskipTests
+
+# -------------------------------------------------------------------------------
+# Stage 2: 実行ステージ - ビルドされたJARファイルを実行するための軽量なJREイメージ
+# -------------------------------------------------------------------------------
+# Java 21 JRE (Eclipse Temurin) の軽量イメージを使用
+FROM eclipse-temurin:21-jre-jammy # 環境に合わせて eclipse-temurin:21-jre-alpine なども選択可能
+
+# 作業ディレクトリを設定
+WORKDIR /app
+
+# ビルドステージで作成されたJARファイルをコピー
+COPY --from=builder /app/target/*.jar app.jar
+
+# アプリケーションがリッスンするポートを公開 (Spring Bootのデフォルトは8080)
+EXPOSE 8080
+
+# アプリケーションを実行するコマンド
+CMD ["java", "-jar", "app.jar"]
