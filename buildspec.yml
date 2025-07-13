@@ -35,4 +35,4 @@ artifacts:
   files:
     - '**/*'
     # --- ここにimagedefinitions.jsonを追加 ---
-    - imagedefinitions.json # この行は既に含まれています
+    - imagedefinitions.json # この行は既に含まれています0
