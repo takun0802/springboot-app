@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
-@CrossOrigin(origins = "http://localhost:3000") // React開発環境からのアクセス許可（必要に応じて変更）
+@CrossOrigin(origins = "http://18.179.45.80:32775/api/events") // React開発環境からのアクセス許可（必要に応じて変更）
 public class EventController {
 
     private final EventService service;
