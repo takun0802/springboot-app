@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
-@CrossOrigin(origins = "https://my-calendar-app-react.s3.ap-northeast-1.amazonaws.com/") // React開発環境からのアクセス許可（必要に応じて変更）
+@CrossOrigin(origins = "https://my-calendar-app-react.s3.ap-northeast-1.amazonaws.com") // React開発環境からのアクセス許可（必要に応じて変更）
 public class EventController {
 
     private final EventService service;
